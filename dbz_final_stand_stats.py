@@ -32,6 +32,12 @@ class Player:
     text += f"{'Ki Resistance' :<18} {player.other_stat :>18} \n"
     text += f"{'Speed' :<18} {player.other_stat :>18} \n"
     return text
+  
+  def npcStatBoost(self):
+    multiplier = 1
+    for i in range(self.prestiges):
+      multiplier += multiplier * 0.1
+    print(f"The npcs have a {int((multiplier-1)*100)}% stat boost against you.")
 
   def levelUp(self, levels: int):
     self.level += levels
@@ -122,6 +128,7 @@ if __name__=="__main__":
 
   print(player.formatStats())
   print(vars(player))
+  player.npcStatBoost()
 
   pyplot.scatter(range(num_of_prestiges + 1), melee_stats)
   pyplot.show()
