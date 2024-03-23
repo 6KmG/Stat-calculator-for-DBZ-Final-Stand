@@ -7,7 +7,16 @@ class Player:
   MIN_DEATH_LVL = 602
   MIN_PRESTIGE_LVL = 432
 
+  def _checkErrors(self):
+    if self.level > 2000:
+      raise ValueError("The level cap is 2000.")
+    if self.level < 1:
+      raise ValueError("The minimum level is 1.")
+    if self.melee_stat > 5400 or self.other_stat > 2875:
+      raise ValueError("CHEATER!!")
+
   def __init__(self, race: str, level = 1, melee_stat = 0, other_stat = 0, name = "Player_Name", _prestiges = 0, _rebirthed = False):
+    race = race.lower()
     if race not in Player.RACES:
       raise ValueError("The given race is incorrect.")
     self.level = round(level)
@@ -18,6 +27,7 @@ class Player:
     self.rebirthed = _rebirthed
     self.dead = False
     self.prestiges = _prestiges
+    self._checkErrors()
 
   def formatStats(self) -> str:
     text = "\tPLAYER STATS\n"
@@ -32,8 +42,8 @@ class Player:
     text += f"{'Ki Resistance' :<18} {player.other_stat :>18} \n"
     text += f"{'Speed' :<18} {player.other_stat :>18} \n"
     return text
-  
-  def npcStatBoost(self):
+
+  def showNpcStatBoost(self):
     multiplier = 1
     for i in range(self.prestiges):
       multiplier += multiplier * 0.1
@@ -41,6 +51,7 @@ class Player:
 
   def levelUp(self, levels: int):
     self.level += levels
+    self._checkErrors()
     if(self.dead):
       self.other_stat += round(levels)
       self.melee_stat += round(levels * 2)
@@ -50,8 +61,10 @@ class Player:
 
   def levelDown(self, levels: int):
     self.level -= levels
+    self._checkErrors()
     if(self.dead):
-      warnings.warn("You're levelling down while being dead, this will cause inconsistencies in your stats")
+      if levels < 0:
+        warnings.warn("You're levelling down while being dead, this will cause inconsistencies in your stats")
       self.other_stat -= round(levels)
       self.melee_stat -= round(levels * 2)
     else:
@@ -61,8 +74,10 @@ class Player:
   def setLevel(self, level: int):
     difference = level - self.level
     self.level = level
+    self._checkErrors()
     if(self.dead):
-      warnings.warn("You're levelling down while being dead, this will cause inconsistencies in your stats")
+      if difference < 0:
+        warnings.warn("You're levelling down while being dead, this will cause inconsistencies in your stats")
       self.other_stat += round(difference)
       self.melee_stat += round(difference * 2)
     else:
@@ -111,7 +126,7 @@ class Player:
       )
 
 if __name__=="__main__":
-  player = Player("android")
+  player = Player("aNdroid")
   player.setLevel(602)
   player.wishDeath()
   player.setLevel(2000)
@@ -122,13 +137,15 @@ if __name__=="__main__":
 
   for i in range(num_of_prestiges):
     player.setLevel(2000)
+    print(f"Prestiges: {player.prestiges}")
+    print(player.formatStats())
     player.prestige()
     melee_stats.append(player.melee_stat)
     other_stats.append(player.other_stat)
-
+  player.setLevel(2000)
   print(player.formatStats())
   print(vars(player))
-  player.npcStatBoost()
+  player.showNpcStatBoost()
 
   pyplot.scatter(range(num_of_prestiges + 1), melee_stats)
   pyplot.show()
