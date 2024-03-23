@@ -43,6 +43,14 @@ class Player:
     text += f"{'Speed' :<18} {player.other_stat :>18} \n"
     return text
 
+  def kamiBoost(self):
+    if self.race != "namekian":
+      raise ValueError("You're not a namekian, therefore you can't use this boost.")
+    self.melee_stat += 20
+
+  def nailBoost(self):
+    self.kamiBoost()
+
   def showNpcStatBoost(self):
     multiplier = 1
     for i in range(self.prestiges):
@@ -126,7 +134,7 @@ class Player:
       )
 
 if __name__=="__main__":
-  player = Player("aNdroid")
+  player = Player("namekiaN")
   player.setLevel(602)
   player.wishDeath()
   player.setLevel(2000)
@@ -140,15 +148,14 @@ if __name__=="__main__":
     print(f"Prestiges: {player.prestiges}")
     print(player.formatStats())
     player.prestige()
-    melee_stats.append(player.melee_stat)
-    other_stats.append(player.other_stat)
   player.setLevel(2000)
   print(player.formatStats())
   print(vars(player))
   player.showNpcStatBoost()
 
-  pyplot.scatter(range(num_of_prestiges + 1), melee_stats)
-  pyplot.show()
+  player.kamiBoost()
+#  pyplot.scatter(range(num_of_prestiges + 1), melee_stats)
+#  pyplot.show()
 
-  pyplot.scatter(range(num_of_prestiges + 1), other_stats)
-  pyplot.show()
+#  pyplot.scatter(range(num_of_prestiges + 1), other_stats)
+#  pyplot.show()
